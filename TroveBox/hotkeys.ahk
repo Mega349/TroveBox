@@ -13,5 +13,5 @@ If !A_IsCompiled
     Hotkey, F2, ExitScript
 }
 Hotkey, F3, main
-Hotkey, F4, test
+Hotkey, F4, tempFunction
 return

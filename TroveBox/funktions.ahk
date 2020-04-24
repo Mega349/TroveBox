@@ -1,5 +1,5 @@
 ;------------------------
-;Own Functions:
+;ToolBox Functions:
 ;------------------------
 
 ArraytoString(Array,counter = 0,delimiter = ",") ;(Array,Start-position,Delimiter)
@@ -65,6 +65,30 @@ ReadFiletoArray(file) ;Index 0 = Amount of lines | Index 1 = line 1 etc...
 ExitFunktion()
 {
 	Gosub, ExitScript
+}
+
+;------------------------
+;Local Functions:
+;------------------------
+
+move(x,y,z,pid,account)
+{
+	tolerance := 1
+	currentPos := []
+
+	currentPos[1] := HexToFloat(ReadMemory(xSkipAddress[account],pid,SkipSize)) ;Save current Main xPosition
+	currentPos[2] := HexToFloat(ReadMemory(ySkipAddress[account],pid,SkipSize)) ;Save current Main yPosition
+	currentPos[3] := HexToFloat(ReadMemory(zSkipAddress[account],pid,SkipSize)) ;Save current Main zPosition
+
+	viewToCoord(pid,x,z,account)
+
+	ControlSend, ahk_parent, {w down}, ahk_pid %pid%
+
+	if (between(currentPos[1], x-tolerance, x+tolerance) && between(currentPos[3], z-tolerance, z+tolerance))
+	{
+		return true
+	}
+	return false
 }
 
 ;------------------------

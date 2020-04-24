@@ -91,6 +91,8 @@ IDArr := []
 positionArr := []
 currentPosMain := []
 oldPosMain := []
+moveDone := []
+accIsMoving := []
 posDisTrigger := 1
 splitDelimiter := "#"
 

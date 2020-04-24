@@ -33,65 +33,25 @@ main:
 			}
 			Else ;Alt Part
 			{
-				msgboxString := playernameArr[account]
-				msgboxString := msgboxString "`n1 | " positionArr[account][1]
-				msgboxString := msgboxString "`n2 | " positionArr[account][2]
-				msgboxString := msgboxString "`n3 | " positionArr[account][3]
-				msgboxString := msgboxString "`n4 | " positionArr[account][4]
-				msgboxString := msgboxString "`n5 | " positionArr[account][5]
-				msgboxString := msgboxString "`n6 | " positionArr[account][6]
-				msgboxString := msgboxString "`n7 | " positionArr[account][7]
-				msgboxString := msgboxString "`n8 | " positionArr[account][8]
-				msgboxString := msgboxString "`n9 | " positionArr[account][9]
-				msgboxString := msgboxString "`n10 | " positionArr[account][10]
-				msgboxString := msgboxString "`n11 | " positionArr[account][11]
-				msgboxString := msgboxString "`n12 | " positionArr[account][12]
-
-				;MsgBox,% msgboxString
-
-				if(move(StrSplit(positionArr[account][1],"#")[1], StrSplit(positionArr[account][1],"#")[2], StrSplit(positionArr[account][1],"#")[3], PIDArr[account], account))
+				if (positionArr[account].Length() == 0 && accIsMoving[account] == TRUE)
 				{
-					positionArr[account].removeAt(1)
+					ControlSend, ahk_parent, {w up}, ahk_pid %PID%
+					accIsMoving[account] := FALSE
+				}
+				Else if (positionArr[account].Length() != 0)
+				{
+					accIsMoving[account] := TRUE
+					moveDone[account] := move(StrSplit(positionArr[account][1],"#")[1], StrSplit(positionArr[account][1],"#")[2], StrSplit(positionArr[account][1],"#")[3], PIDArr[account], account)
+					if (moveDone[account])
+					{
+						positionArr[account].removeAt(1)
+					}
 				}
 			}
 		}
 	}
 return
 
-/*
-viewToCoord:
-	while (TRUE)
-	{
-		for account, PID in PIDArr
-		{
-			sleep, 50
-			viewToCoord(PID,82.5,-40.5,account)
-		}
-	}
+tempFunction:
+	WinActivateBottom, ahk_exe Trove.exe
 return
-*/
-
-test:
-WinActivateBottom, ahk_exe Trove.exe
-return
-
-move(x,y,z,pid,account)
-{
-	toleranz := 0.5
-	currentPos := []
-
-	currentPos[1] := HexToFloat(ReadMemory(xSkipAddress[account],pid,SkipSize)) ;Save current Main xPosition
-	currentPos[2] := HexToFloat(ReadMemory(ySkipAddress[account],pid,SkipSize)) ;Save current Main yPosition
-	currentPos[3] := HexToFloat(ReadMemory(zSkipAddress[account],pid,SkipSize)) ;Save current Main zPosition
-
-	viewToCoord(pid,x,z,account)
-
-	ControlSend, ahk_parent, {w down}, ahk_pid %pid%
-
-	if (between(currentPos[1], x-toleranz, x+toleranz) && between(currentPos[3], z-toleranz, z+toleranz))
-	{
-		ControlSend, ahk_parent, {w up}, ahk_pid %pid%
-		return true
-	}
-	return false
-}
