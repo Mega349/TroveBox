@@ -2,6 +2,19 @@
 ;ToolBox Functions:
 ;------------------------
 
+getTimeDifference(firstTime, secondTime)
+{
+    EnvSub, firstTime, secondTime, Seconds
+    return, firstTime
+}
+
+addSecondsFromNow(sec)
+{
+    newTime := A_Now
+    EnvAdd, newTime, sec, Seconds
+    return newTime
+}
+
 ArraytoString(Array,counter = 0,delimiter = ",") ;(Array,Start-position,Delimiter)
 {
 	String := Array[counter]
@@ -71,20 +84,29 @@ ExitFunktion()
 ;Local Functions:
 ;------------------------
 
-move(x,y,z,pid,account)
+move(x, y, z, pid, account, moveTolerance = 1, upSpeed = 10, jumpDelay = 2)
 {
-	tolerance := 1
 	currentPos := []
 
-	currentPos[1] := HexToFloat(ReadMemory(xSkipAddress[account],pid,SkipSize)) ;Save current Main xPosition
-	currentPos[2] := HexToFloat(ReadMemory(ySkipAddress[account],pid,SkipSize)) ;Save current Main yPosition
-	currentPos[3] := HexToFloat(ReadMemory(zSkipAddress[account],pid,SkipSize)) ;Save current Main zPosition
+	currentPos[1] := HexToFloat(ReadMemory(xSkipAddress[account],pid,SkipSize))
+	currentPos[2] := HexToFloat(ReadMemory(ySkipAddress[account],pid,SkipSize))
+	currentPos[3] := HexToFloat(ReadMemory(zSkipAddress[account],pid,SkipSize))
 
 	viewToCoord(pid,x,z,account)
 
+	if (currentPos[2] + 0.1 < y)
+	{
+		if (getTimeDifference(A_Now,JUMPTIME[account]) >= 0 || JUMPTIME[account] == "") ;The Time diff. is negative if the Jump Time is not reached
+		{
+			ControlSend, ahk_parent, {SPACE}, ahk_pid %pid% ;not needed, but if the Player Jump frequently while Accel. up in the Air, the Server wont rubberband him down.
+			JUMPTIME[account] := addSecondsFromNow(jumpDelay) ;Set the Jump Time to x sec from now (because i dont want "Jump Spam")
+		}
+		WriteProcessMemory(pid,yAccelerationAddress[account],FloatToHex(upSpeed),AccelerationSize)
+	}
+
 	ControlSend, ahk_parent, {w down}, ahk_pid %pid%
 
-	if (between(currentPos[1], x-tolerance, x+tolerance) && between(currentPos[3], z-tolerance, z+tolerance))
+	if (between(currentPos[1], x-moveTolerance, x+moveTolerance) && between(currentPos[3], z-moveTolerance, z+moveTolerance))
 	{
 		return true
 	}
@@ -138,32 +160,32 @@ viewToCoord(pid,xDesPos,zDesPos,account)
 
 getPointerAddress(PIDArray,IDArray)
 {
-	for key, PID in PIDArray
+	for index, PID in PIDArray
 	{
-		ProcessBase := getProcessBaseAddress(IDArray[key])
+		ProcessBase := getProcessBaseAddress(IDArray[index])
 
-		xSkipAddress[key] := GetAddress(PID, ProcessBase, SkipBase, xSkipOffsetString)
-		ySkipAddress[key] := GetAddress(PID, ProcessBase, SkipBase, ySkipOffsetString)
-		zSkipAddress[key] := GetAddress(PID, ProcessBase, SkipBase, zSkipOffsetString)
+		xSkipAddress[index] := GetAddress(PID, ProcessBase, SkipBase, xSkipOffsetString)
+		ySkipAddress[index] := GetAddress(PID, ProcessBase, SkipBase, ySkipOffsetString)
+		zSkipAddress[index] := GetAddress(PID, ProcessBase, SkipBase, zSkipOffsetString)
 
-		xAccelerationAddress[key] := GetAddress(PID, ProcessBase, AccelerationBase, xAccelerationOffsetString)
-		yAccelerationAddress[key] := GetAddress(PID, ProcessBase, AccelerationBase, yAccelerationOffsetString)
-		zAccelerationAddress[key] := GetAddress(PID, ProcessBase, AccelerationBase, zAccelerationOffsetString)
+		xAccelerationAddress[index] := GetAddress(PID, ProcessBase, AccelerationBase, xAccelerationOffsetString)
+		yAccelerationAddress[index] := GetAddress(PID, ProcessBase, AccelerationBase, yAccelerationOffsetString)
+		zAccelerationAddress[index] := GetAddress(PID, ProcessBase, AccelerationBase, zAccelerationOffsetString)
 
-		xViewAddress[key] := GetAddress(PID, ProcessBase, ViewBase, xViewOffsetString)
-		yViewAddress[key] := GetAddress(PID, ProcessBase, ViewBase, yViewOffsetString)
-		zViewAddress[key] := GetAddress(PID, ProcessBase, ViewBase, zViewOffsetString)
+		xViewAddress[index] := GetAddress(PID, ProcessBase, ViewBase, xViewOffsetString)
+		yViewAddress[index] := GetAddress(PID, ProcessBase, ViewBase, yViewOffsetString)
+		zViewAddress[index] := GetAddress(PID, ProcessBase, ViewBase, zViewOffsetString)
 
-		SpeedAddress[key] := GetAddress(PID, ProcessBase, SpeedBase, SpeedOffsetString)
+		SpeedAddress[index] := GetAddress(PID, ProcessBase, SpeedBase, SpeedOffsetString)
 
-		currentCDAdress[key] := GetAddress(PID, ProcessBase, CDBase, currentCDOffsetString)
-		minCDAdress[key] := GetAddress(PID, ProcessBase, CDBase, minCDOffsetString)
-		maxCDAdress[key] := GetAddress(PID, ProcessBase, CDBase, maxCDOffsetString)
+		currentCDAdress[index] := GetAddress(PID, ProcessBase, CDBase, currentCDOffsetString)
+		minCDAdress[index] := GetAddress(PID, ProcessBase, CDBase, minCDOffsetString)
+		maxCDAdress[index] := GetAddress(PID, ProcessBase, CDBase, maxCDOffsetString)
 
-		PlayernameAddress[key] := GetAddress(PID, ProcessBase, PlayernameBase, PlayernameOffsetString)
+		PlayernameAddress[index] := GetAddress(PID, ProcessBase, PlayernameBase, PlayernameOffsetString)
 
-		cViewHightAddress[key] := GetAddress(PID, ProcessBase, cViewBase, cViewHightString)
-		cViewWidthAddress[key] := GetAddress(PID, ProcessBase, cViewBase, cViewWidthString)
+		cViewHightAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewHightString)
+		cViewWidthAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewWidthString)
 	}
 }
 
@@ -216,11 +238,11 @@ ReadMemory(MADDRESS, pid, size = 4)
 	Return, result
 }
 
-WriteProcessMemory(pid,address,wert, size = 4)
+WriteProcessMemory(pid,address,valueToWrite, size = 4)
 {
 	VarSetCapacity(processhandle,32,0)
 	VarSetCapacity(value, 32, 0)
-	NumPut(wert,value,0,Uint)
+	NumPut(valueToWrite,value,0,Uint)
 	processhandle:=DllCall("OpenProcess","Uint",0x38,"int",0,"int",pid)
 	Bvar:=DllCall("WriteProcessMemory","Uint",processhandle,"Uint",address+0,"Uint",&value,"Uint",size,"Uint",0)
 }

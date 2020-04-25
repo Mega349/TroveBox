@@ -13,7 +13,7 @@ OnExit("ExitFunktion")
 
 ;File / Name / Location Vars
 global ScriptName := "TroveBox"
-global ScriptVersion := "1.0.0"
+global ScriptVersion := "0.1.0"
 TempPointerFile = %A_Temp%\Trove_Pointer.ini
 TempVersionsFile = %A_Temp%\Versions.ini
 PointerHostFile := "https://webtrash.lima-city.de/Trove_Pointer_Host.ini"
@@ -65,6 +65,10 @@ global cViewWidthString := "0x0+0x0"
 PointerAutoUpdate := 1
 EnableUpdateCheck := 1
 ShowTooltip := 1
+posDisTrigger := 0.5
+moveTolerance := 2
+upSpeed := 10
+jumpDelay := 2 ;in Sec
 
 ;default Keys
 
@@ -85,6 +89,9 @@ global maxCDAdress := []
 global PlayernameAddress := []
 global cViewHightAddress := []
 global cViewWidthAddress := []
+
+global JUMPTIME := []
+
 PIDArr := []
 playernameArr := []
 IDArr := []
@@ -93,7 +100,6 @@ currentPosMain := []
 oldPosMain := []
 moveDone := []
 accIsMoving := []
-posDisTrigger := 1
 splitDelimiter := "#"
 
 ;------------------------
@@ -186,6 +192,7 @@ SplashTextOff
 SetTimer, ToolTip, 70
 Gosub, InitHotkeys
 ;Gosub, main
+Gosub, readTroveWindows
 return
 
 ;------------------------

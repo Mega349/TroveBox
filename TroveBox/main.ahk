@@ -36,12 +36,15 @@ main:
 				if (positionArr[account].Length() == 0 && accIsMoving[account] == TRUE)
 				{
 					ControlSend, ahk_parent, {w up}, ahk_pid %PID%
+					WriteProcessMemory(PID,xSkipAddress[account],ReadMemory(xSkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main xPos and force to Alt
+					WriteProcessMemory(PID,ySkipAddress[account],ReadMemory(ySkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main yPos and force to Alt
+					WriteProcessMemory(PID,zSkipAddress[account],ReadMemory(zSkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main zPos and force to Alt
 					accIsMoving[account] := FALSE
 				}
 				Else if (positionArr[account].Length() != 0)
 				{
 					accIsMoving[account] := TRUE
-					moveDone[account] := move(StrSplit(positionArr[account][1],"#")[1], StrSplit(positionArr[account][1],"#")[2], StrSplit(positionArr[account][1],"#")[3], PIDArr[account], account)
+					moveDone[account] := move(StrSplit(positionArr[account][1],"#")[1], StrSplit(positionArr[account][1],"#")[2], StrSplit(positionArr[account][1],"#")[3], PIDArr[account], account,moveTolerance,upSpeed,jumpDelay)
 					if (moveDone[account])
 					{
 						positionArr[account].removeAt(1)

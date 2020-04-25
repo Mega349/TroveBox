@@ -43,9 +43,9 @@ Restart:
 ExitApp
 
 ExitScript: ;called through "ExitFunktion()" use "ExitApp" to run that code on exit. (the code will run twice idk why...)
-	for account, PID in PIDArr
+	for PID in PIDArr
 	{
-		ControlSend, ahk_parent, {w up},% "ahk_pid" PID
+		ControlSend, ahk_parent, {w up},ahk_pid %PID%
 	}
 ExitApp
 
@@ -66,7 +66,7 @@ ToolTip:
 			}
 			else
 			{
-				ToolTipString := ToolTipString "`n" playernameArr[accToolTip] " " PIDToolTip " " positionArr[accToolTip].Length()
+				ToolTipString := ToolTipString "`n" playernameArr[accToolTip] " | " PIDToolTip " | " positionArr[accToolTip].Length() " | " getTimeDifference(A_Now,JUMPTIME[accToolTip])
 			}
 		}
 
