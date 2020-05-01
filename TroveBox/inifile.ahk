@@ -71,8 +71,12 @@ WritePointertoini(ini)
 
 		IniWrite,%cViewSize%,%ini%,cView,Size
 		IniWrite,%cViewBase%,%ini%,cView,Base
-		IniWrite,%cViewHightString%,%ini%,cView,Hight
-		IniWrite,%cViewWidthString%,%ini%,cView,Width
+		IniWrite,%cViewHightSOffsetString%,%ini%,cView,Hight
+		IniWrite,%cViewWidthOffsetString%,%ini%,cView,Width
+
+		IniWrite,%accountIdSize%,%ini%,accountId,Size
+		IniWrite,%accountIdbase%,%ini%,accountId,Base
+		IniWrite,%accountIdOffsetString%,%ini%,accountId,Offsets
 
 		state := TRUE
 	}
@@ -121,8 +125,12 @@ ReadPointerfromini(ini)
 
 	IniRead,cViewSize,%ini%,cView,Size
 	IniRead,cViewBase,%ini%,cView,Base
-	IniRead,cViewHightString,%ini%,cView,Hight
-	IniRead,cViewWidthString,%ini%,cView,Width
+	IniRead,cViewHightSOffsetString,%ini%,cView,Hight
+	IniRead,cViewWidthOffsetString,%ini%,cView,Width
+
+	IniRead,accountIdSize,%ini%,accountId,Size
+	IniRead,accountIdbase,%ini%,accountId,Base
+	IniRead,accountIdOffsetString,%ini%,accountId,Offsets
 }
 
 Updateini:

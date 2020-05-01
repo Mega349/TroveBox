@@ -46,7 +46,7 @@ global SpeedSize := 0
 global SpeedBase := "0x00000000"
 global SpeedOffsetString := "0x0+0x0+0x0+0x0+0x0"
 
-;CD = Camera Distance
+;;CD = Camera Distance
 global CDSize := 0
 global CDBase := "0x00000000"
 global minCDOffsetString := "0x0+0x0"
@@ -58,8 +58,17 @@ global PlayernameOffsetString := "0x0+0x0"
 
 global cViewSize := 0
 global cViewBase := "0x00000000"
-global cViewHightString := "0x0+0x0"
-global cViewWidthString := "0x0+0x0"
+global cViewHightSOffsetString := "0x0+0x0"
+global cViewWidthOffsetString := "0x0+0x0"
+
+global accountIdSize := 0
+global accountIdbase := "0x00000000"
+global accountIdOffsetString := "0x0+0x0+0x0+0x0+0x0+0x0"
+
+;Pattern for Pattern Scan
+
+;;"????????ngle block out of existence" -> AccountID [8] + ZeroByte + String in Trove Language Var : $prefabs_abilities_delete_block_metaforge_item_description
+mainIdPattern := ["?", "?", "?", "?", "?", "?", "?", "?", "?", 0x6E, 0x67, 0x6C, 0x65, 0x20, 0x62, 0x6C, 0x6F, 0x63, 0x6B, 0x20, 0x6F, 0x75, 0x74, 0x20, 0x6F, 0x66, 0x20, 0x65, 0x78, 0x69, 0x73, 0x74, 0x65, 0x6E, 0x63, 0x65]
 
 ;default Config
 PointerAutoUpdate := 1
@@ -71,6 +80,7 @@ upSpeed := 10
 jumpDelay := 2 ;in Sec
 
 ;default Keys
+;;...
 
 ;Internal Vars
 global xSkipAddress := []
@@ -89,12 +99,17 @@ global maxCDAdress := []
 global PlayernameAddress := []
 global cViewHightAddress := []
 global cViewWidthAddress := []
+global accountIdAddress := []
+
+global mainIdAddress := []
 
 global JUMPTIME := []
 
 PIDArr := []
-playernameArr := []
 IDArr := []
+playernameArr := []
+AccountIdArr := []
+
 positionArr := []
 currentPosMain := []
 oldPosMain := []
@@ -205,3 +220,4 @@ return
 #Include, subroutine.ahk
 #Include, main.ahk
 #Include, funktions.ahk
+#Include, classMemory.ahk

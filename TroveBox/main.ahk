@@ -1,9 +1,9 @@
 main:
 	Gosub, readTroveWindows
 
-	oldPosMain[1] := HexToFloat(ReadMemory(xSkipAddress[1],PID,SkipSize)) ;Save current Main xPosition
-	oldPosMain[2] := HexToFloat(ReadMemory(ySkipAddress[1],PID,SkipSize)) ;Save current Main yPosition
-	oldPosMain[3] := HexToFloat(ReadMemory(zSkipAddress[1],PID,SkipSize)) ;Save current Main zPosition
+	oldPosMain[1] := HexToFloat(ReadMemory(xSkipAddress[1],PID,SkipSize)) ;Get current Main xPosition
+	oldPosMain[2] := HexToFloat(ReadMemory(ySkipAddress[1],PID,SkipSize)) ;Get current Main yPosition
+	oldPosMain[3] := HexToFloat(ReadMemory(zSkipAddress[1],PID,SkipSize)) ;Get current Main zPosition
 
 	while (TRUE)
 	{
@@ -12,9 +12,9 @@ main:
 			if (account == 1) ;Main Part
 			{
 				;MsgBox,% "Main | " playernameArr[account]
-				currentPosMain[1] := HexToFloat(ReadMemory(xSkipAddress[account],PID,SkipSize)) ;Save current Main xPosition
-				currentPosMain[2] := HexToFloat(ReadMemory(ySkipAddress[account],PID,SkipSize)) ;Save current Main yPosition
-				currentPosMain[3] := HexToFloat(ReadMemory(zSkipAddress[account],PID,SkipSize)) ;Save current Main zPosition
+				currentPosMain[1] := HexToFloat(ReadMemory(xSkipAddress[account],PID,SkipSize)) ;Get current Main xPosition
+				currentPosMain[2] := HexToFloat(ReadMemory(ySkipAddress[account],PID,SkipSize)) ;Get current Main yPosition
+				currentPosMain[3] := HexToFloat(ReadMemory(zSkipAddress[account],PID,SkipSize)) ;Get current Main zPosition
 
 				if (!between(currentPosMain[1],oldPosMain[1]-posDisTrigger,oldPosMain[1]+posDisTrigger) || !between(currentPosMain[3],oldPosMain[3]-posDisTrigger,oldPosMain[3]+posDisTrigger))
 				{

@@ -1,4 +1,6 @@
 readTroveWindows:
+	SplashTextOn,200,25,% ScriptName " v" ScriptVersion,% "Reading account information..."
+
 	WinGet, IDArrP, List, ahk_exe Trove.exe
 
 	accCounter := IDArrP
@@ -17,6 +19,13 @@ readTroveWindows:
 
 	for index_, PID_ in PIDArr
 	{
+		memoryObjekt := new _ClassMemory("ahk_pid " PID_, "", hProcess) ;Create Memory Objekt
+
+		mainIdAddress[index_] := memoryObjekt.processPatternScan(,, mainIdPattern*) ;Find String in Memory using Pattern
+		;MsgBox,% ReadStringFromMemory(mainIdAddress[index_],PID_)
+		AccountIdArr[index_] := ReadMemory(accountIdAddress[index_],PID_,accountIdSize) ;read AccountID
+		memoryObjekt.writeString(mainIdAddress[index_], AccountIdArr[1]) ;Write Main AccountID to all Accounts
+
 		playernameArr[index_] := ReadStringFromMemory(PlayernameAddress[index_],PID_)
 		if (index_ == 1)
 		{
@@ -28,8 +37,9 @@ readTroveWindows:
 			;WinSetTitle, ahk_pid %PID_%, ,% "PID: " PID_ " | " playernameArr[index_]
 			WinSetTitle, ahk_pid %PID_%, ,% playernameArr[index_]
 		}
-		
-}
+	}
+
+	SplashTextOff
 return
 
 Save:
@@ -62,7 +72,7 @@ ToolTip:
 		{
 			if (accToolTip == 1)
 			{
-				ToolTipString := playernameArr[accToolTip] "(Main) " PIDToolTip
+				ToolTipString := playernameArr[accToolTip] " (Main) " PIDToolTip
 			}
 			else
 			{

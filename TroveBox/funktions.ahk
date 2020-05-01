@@ -184,15 +184,16 @@ getPointerAddress(PIDArray,IDArray)
 
 		PlayernameAddress[index] := GetAddress(PID, ProcessBase, PlayernameBase, PlayernameOffsetString)
 
-		cViewHightAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewHightString)
-		cViewWidthAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewWidthString)
+		cViewHightAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewHightSOffsetString)
+		cViewWidthAddress[index] := GetAddress(PID, ProcessBase, cViewBase, cViewWidthOffsetString)
+
+		accountIdAddress[index] := GetAddress(PID, ProcessBase, accountIdbase, accountIdOffsetString)
 	}
 }
 
 ;------------------------
 ;other Functions:
 ;------------------------
-
 
 getProcessBaseAddress(Handle)
 {
