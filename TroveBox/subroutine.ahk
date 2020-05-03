@@ -21,8 +21,7 @@ readTroveWindows:
 	{
 		memoryObjekt := new _ClassMemory("ahk_pid " PID_, "", hProcess) ;Create Memory Objekt
 
-		mainIdAddress[index_] := memoryObjekt.processPatternScan(,, mainIdPattern*) ;Find String in Memory using Pattern
-		;MsgBox,% ReadStringFromMemory(mainIdAddress[index_],PID_)
+		mainIdAddress[index_] := memoryObjekt.processPatternScan(,, mainIdPattern*) ;Find String in Memory using Pattern (very slow!)
 		AccountIdArr[index_] := ReadMemory(accountIdAddress[index_],PID_,accountIdSize) ;read AccountID
 		memoryObjekt.writeString(mainIdAddress[index_], AccountIdArr[1]) ;Write Main AccountID to all Accounts
 
@@ -72,11 +71,20 @@ ToolTip:
 		{
 			if (accToolTip == 1)
 			{
-				ToolTipString := playernameArr[accToolTip] " (Main) " PIDToolTip
+				ToolTipString := playernameArr[accToolTip] " (Main) | PID: " PIDToolTip
 			}
 			else
 			{
-				ToolTipString := ToolTipString "`n" playernameArr[accToolTip] " | " PIDToolTip " | " positionArr[accToolTip].Length() " | " getTimeDifference(A_Now,JUMPTIME[accToolTip])
+				ToolTipString := ToolTipString "`n" playernameArr[accToolTip] " | PID: " PIDToolTip
+				ToolTipString := ToolTipString " |Tasks:  " positionArr[accToolTip].Length()
+				if !(getTimeDifference(A_Now,teleportCooldown[accToolTip]) >= 0)
+				{
+					ToolTipString := ToolTipString " | TP Cooldown: " getTimeDifference(A_Now,teleportCooldown[accToolTip]) * -1
+				}
+				if (joinRequest[accToolTip] > 0)
+				{
+					ToolTipString := ToolTipString " | Teleport requested " joinRequest[accToolTip] 
+				}
 			}
 		}
 
@@ -87,4 +95,3 @@ ToolTip:
 		ToolTip,,,,1
 	}
 return
-

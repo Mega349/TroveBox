@@ -66,18 +66,20 @@ global accountIdbase := "0x00000000"
 global accountIdOffsetString := "0x0+0x0+0x0+0x0+0x0+0x0"
 
 ;Pattern for Pattern Scan
-
-;;"????????ngle block out of existence" -> AccountID [8] + ZeroByte + String in Trove Language Var : $prefabs_abilities_delete_block_metaforge_item_description
+;;"????????ngle block out of existence" -> AccountID [8] + ZeroByte + String in Trove Language Var : $prefabs_abilities_delete_block_metaforge_item_description in prefabs_abilities.binfab
 mainIdPattern := ["?", "?", "?", "?", "?", "?", "?", "?", "?", 0x6E, 0x67, 0x6C, 0x65, 0x20, 0x62, 0x6C, 0x6F, 0x63, 0x6B, 0x20, 0x6F, 0x75, 0x74, 0x20, 0x6F, 0x66, 0x20, 0x65, 0x78, 0x69, 0x73, 0x74, 0x65, 0x6E, 0x63, 0x65]
 
 ;default Config
-PointerAutoUpdate := 1
-EnableUpdateCheck := 1
-ShowTooltip := 1
-posDisTrigger := 0.5
-moveTolerance := 2
-upSpeed := 10
+PointerAutoUpdate := 1 ;true/false
+EnableUpdateCheck := 1 ;true/false
+ShowTooltip := 1 ;true/false
+posDisTrigger := 0.5 ;in Blocks
+moveTolerance := 2 ;in Blocks
+upSpeed := 10 ;Trove Accel. (10 is like Normal Jump)
 jumpDelay := 2 ;in Sec
+inviteJumpDelay := 1 ;in Sec
+joinMainDistanceStanding := 1 ;in Blocks
+joinMainDistanceMoving := 10 ;in Blocks
 
 ;default Keys
 ;;...
@@ -101,9 +103,13 @@ global cViewHightAddress := []
 global cViewWidthAddress := []
 global accountIdAddress := []
 
-global mainIdAddress := []
+mainIdAddress := []
 
 global JUMPTIME := []
+global STUCKTIMEOUT := []
+
+inviteJumpTime := []
+teleportCooldown := []
 
 PIDArr := []
 IDArr := []
@@ -111,10 +117,12 @@ playernameArr := []
 AccountIdArr := []
 
 positionArr := []
-currentPosMain := []
+currentMainPos := []
+currentAltPos := [] ;just for the current account for position checks
 oldPosMain := []
 moveDone := []
 accIsMoving := []
+joinRequest := [] ;0 = None | 1 = Stop Moving | 2 = Need Teleport (wait for Cooldown) | 3 = Need validation
 splitDelimiter := "#"
 
 ;------------------------
@@ -206,8 +214,8 @@ SplashTextOff
 
 SetTimer, ToolTip, 70
 Gosub, InitHotkeys
-;Gosub, main
-Gosub, readTroveWindows
+Gosub, main
+;Gosub, readTroveWindows
 return
 
 ;------------------------

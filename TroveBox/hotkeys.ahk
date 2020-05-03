@@ -14,4 +14,5 @@ If !A_IsCompiled
 }
 Hotkey, F3, main
 Hotkey, F4, tempFunction
+Hotkey, F5, requestJoin
 return
