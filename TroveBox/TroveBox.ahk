@@ -123,6 +123,7 @@ oldPosMain := []
 moveDone := []
 accIsMoving := []
 joinRequest := [] ;0 = None | 1 = Stop Moving | 2 = Need Teleport (wait for Cooldown) | 3 = Need validation
+positionSyncDelay := []
 splitDelimiter := "#"
 
 ;------------------------

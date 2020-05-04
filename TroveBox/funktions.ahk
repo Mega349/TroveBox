@@ -96,7 +96,7 @@ move(x, y, z, pid, account, moveTolerance = 1, upSpeed = 10, jumpDelay = 2)
 
 	if (currentPos[2] + 0.1 < y)
 	{
-		if (getTimeDifference(A_Now,JUMPTIME[account]) >= 0 || JUMPTIME[account] == "") ;The Time diff. is negative if the Jump Time is not reached
+		if (getTimeDifference(A_Now,JUMPTIME[account]) >= 0) ;The Time diff. is negative if the Jump Time is not reached
 		{
 			ControlSend, ahk_parent, {SPACE}, ahk_pid %pid% ;not needed, but if the Player Jump frequently while Accel. up in the Air, the Server wont rubberband him down.
 			JUMPTIME[account] := addSecondsFromNow(jumpDelay) ;Set the Jump Time to x sec from now (because i dont want "Jump Spam")

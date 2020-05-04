@@ -33,13 +33,14 @@ main:
 			}
 			Else ;Alt Part
 			{
-				if (FALSE && positionArr[account].Length() == 0 && accIsMoving[account] == TRUE) ;Stop Moving if Position-Stack is cleared and Player moved before
+				if (positionArr[account].Length() == 0 && accIsMoving[account] == TRUE && getTimeDifference(A_Now,positionSyncDelay[account]) >=0) ;Stop Moving if Position-Stack is cleared and Player moved before
 				{
 					ControlSend, ahk_parent, {w up}, ahk_pid %PID%
 					WriteProcessMemory(PID,xSkipAddress[account],ReadMemory(xSkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main xPos and force to Alt
 					WriteProcessMemory(PID,ySkipAddress[account],ReadMemory(ySkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main yPos and force to Alt
 					WriteProcessMemory(PID,zSkipAddress[account],ReadMemory(zSkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main zPos and force to Alt
 					accIsMoving[account] := FALSE
+					positionSyncDelay[account] := addSecondsFromNow(1)
 				}
 				Else if (positionArr[account].Length() != 0 && joinRequest[account] != 1 && joinRequest[account] != 2 && joinRequest[account] != 3) ;Move Account if Position-Stack is not empty
 				{
@@ -50,14 +51,14 @@ main:
 						positionArr[account].removeAt(1)
 					}
 				}
-				Else if (joinRequest[account] == 1) ;Teleport if requested
+				Else if (joinRequest[account] == 1) ;Stop Moving if Teleport is requested
 				{
 					ControlSend, ahk_parent, {w up}, ahk_pid %PID%
 					joinRequest[account] := 2
 				}
-				Else if (joinRequest[account] == 2) ;Teleport if requested
+				Else if (joinRequest[account] == 2) ;Teleport if requested (wait for Cooldown)
 				{
-					if (getTimeDifference(A_Now,teleportCooldown[account]) >=0 || teleportCooldown[account] == "")
+					if (getTimeDifference(A_Now,teleportCooldown[account]) >=0)
 					{
 						ControlSend, ahk_parent, {o}, ahk_pid %PID%
 						inviteJumpTime[account] := addSecondsFromNow(inviteJumpDelay)
