@@ -5,6 +5,11 @@ main:
 	oldPosMain[2] := HexToFloat(ReadMemory(ySkipAddress[1],PID,SkipSize)) ;Get current Main yPosition
 	oldPosMain[3] := HexToFloat(ReadMemory(zSkipAddress[1],PID,SkipSize)) ;Get current Main zPosition
 
+	for account, PID in PIDArr
+	{
+		stuckTimeOutTimer[account] := addSecondsFromNow(stuckTimeOut)
+	}
+
 	while (TRUE)
 	{
 		for account, PID in PIDArr
@@ -33,7 +38,11 @@ main:
 			}
 			Else ;Alt Part
 			{
-				if (positionArr[account].Length() == 0 && accIsMoving[account] == TRUE && getTimeDifference(A_Now,positionSyncDelay[account]) >=0) ;Stop Moving if Position-Stack is cleared and Player moved before
+				if (getTimeDifference(A_Now,stuckTimeOutTimer[account]) >=0 && !between(joinRequest[account],1,3))
+				{
+					joinRequest[account] := 1
+				}
+				Else if (positionArr[account].Length() == 0 && accIsMoving[account] == TRUE && getTimeDifference(A_Now,positionSyncDelay[account]) >=0) ;Stop Moving if Position-Stack is cleared and Player moved before
 				{
 					ControlSend, ahk_parent, {w up}, ahk_pid %PID%
 					WriteProcessMemory(PID,xSkipAddress[account],ReadMemory(xSkipAddress[1],PIDArr[1],SkipSize),SkipSize) ;Read Main xPos and force to Alt
@@ -42,13 +51,14 @@ main:
 					accIsMoving[account] := FALSE
 					positionSyncDelay[account] := addSecondsFromNow(1)
 				}
-				Else if (positionArr[account].Length() != 0 && joinRequest[account] != 1 && joinRequest[account] != 2 && joinRequest[account] != 3) ;Move Account if Position-Stack is not empty
+				Else if (positionArr[account].Length() != 0 && !between(joinRequest[account],1,3)) ;Move Account if Position-Stack is not empty
 				{
 					accIsMoving[account] := TRUE
 					moveDone[account] := move(StrSplit(positionArr[account][1],"#")[1], StrSplit(positionArr[account][1],"#")[2], StrSplit(positionArr[account][1],"#")[3], PIDArr[account], account,moveTolerance,upSpeed,jumpDelay)
 					if (moveDone[account])
 					{
 						positionArr[account].removeAt(1)
+						stuckTimeOutTimer[account] := addSecondsFromNow(stuckTimeOut)
 					}
 				}
 				Else if (joinRequest[account] == 1) ;Stop Moving if Teleport is requested
@@ -94,15 +104,12 @@ main:
 						joinRequest[account] := 1
 					}
 				}
+				else
+				{
+					stuckTimeOutTimer[account] := addSecondsFromNow(stuckTimeOut)
+				}
 			}
 		}
-	}
-return
-
-requestJoin:
-	for _i, voidVar in PIDArr
-	{
-		joinRequest[_i] := 1
 	}
 return
 

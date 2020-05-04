@@ -13,7 +13,7 @@ OnExit("ExitFunktion")
 
 ;File / Name / Location Vars
 global ScriptName := "TroveBox"
-global ScriptVersion := "0.1.0"
+global ScriptVersion := "0.2.0"
 TempPointerFile = %A_Temp%\Trove_Pointer.ini
 TempVersionsFile = %A_Temp%\Versions.ini
 PointerHostFile := "https://webtrash.lima-city.de/Trove_Pointer_Host.ini"
@@ -66,7 +66,7 @@ global accountIdbase := "0x00000000"
 global accountIdOffsetString := "0x0+0x0+0x0+0x0+0x0+0x0"
 
 ;Pattern for Pattern Scan
-;;"????????ngle block out of existence" -> AccountID [8] + ZeroByte + String in Trove Language Var : $prefabs_abilities_delete_block_metaforge_item_description in prefabs_abilities.binfab
+;;"????????ngle block out of existence" -> AccountID [8] + ZeroByte + String in Trove Language Var : "$prefabs_abilities_delete_block_metaforge_item_description" in prefabs_abilities.binfab
 mainIdPattern := ["?", "?", "?", "?", "?", "?", "?", "?", "?", 0x6E, 0x67, 0x6C, 0x65, 0x20, 0x62, 0x6C, 0x6F, 0x63, 0x6B, 0x20, 0x6F, 0x75, 0x74, 0x20, 0x6F, 0x66, 0x20, 0x65, 0x78, 0x69, 0x73, 0x74, 0x65, 0x6E, 0x63, 0x65]
 
 ;default Config
@@ -80,6 +80,7 @@ jumpDelay := 2 ;in Sec
 inviteJumpDelay := 1 ;in Sec
 joinMainDistanceStanding := 1 ;in Blocks
 joinMainDistanceMoving := 10 ;in Blocks
+stuckTimeOut := 10 ;in Sec
 
 ;default Keys
 ;;...
@@ -106,7 +107,6 @@ global accountIdAddress := []
 mainIdAddress := []
 
 global JUMPTIME := []
-global STUCKTIMEOUT := []
 
 inviteJumpTime := []
 teleportCooldown := []
@@ -124,6 +124,7 @@ moveDone := []
 accIsMoving := []
 joinRequest := [] ;0 = None | 1 = Stop Moving | 2 = Need Teleport (wait for Cooldown) | 3 = Need validation
 positionSyncDelay := []
+stuckTimeOutTimer := []
 splitDelimiter := "#"
 
 ;------------------------

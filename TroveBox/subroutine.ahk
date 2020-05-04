@@ -41,6 +41,13 @@ readTroveWindows:
 	SplashTextOff
 return
 
+requestJoin:
+	for _i, voidVar in PIDArr
+	{
+		joinRequest[_i] := 1
+	}
+return
+
 Save:
 return
 
@@ -76,7 +83,8 @@ ToolTip:
 			else
 			{
 				ToolTipString := ToolTipString "`n" playernameArr[accToolTip] " | PID: " PIDToolTip
-				ToolTipString := ToolTipString " |Tasks:  " positionArr[accToolTip].Length()
+				ToolTipString := ToolTipString " | Tasks:  " positionArr[accToolTip].Length()
+				ToolTipString := ToolTipString " | Stuck Timeout: " getTimeDifference(A_Now,stuckTimeOutTimer[accToolTip]) * -1
 				if !(getTimeDifference(A_Now,teleportCooldown[accToolTip]) >= 0)
 				{
 					ToolTipString := ToolTipString " | TP Cooldown: " getTimeDifference(A_Now,teleportCooldown[accToolTip]) * -1
